@@ -111,7 +111,9 @@ LIT_PCF_CIV_NO_LUC = 2.0
 LIT_PCF_CIV_LUC = 30.0
 
 # ---------------------------------------------------------------------------
-# 10-11. Coffee-specific LUC and removal constants — SOURCES.md items #10-#11
+# 11. Coffee-specific LUC and agroforestry removal constants — SOURCES.md item #11
+# (item #10 is the unrelated "agroforestry product-level nuance" note — this
+# section is NOT a continuation of it, despite the numbering looking adjacent).
 # Fertiliser N2O methodology (IPCC Tables 11.1/11.3) and transport EFs are
 # crop-agnostic and reused as-is from the cocoa section above.
 # ---------------------------------------------------------------------------
@@ -142,12 +144,24 @@ REMOVAL_RATE_AGROFORESTRY_COFFEE = 17676  # kg CO2/ha/yr at ~100% canopy cover
 LIT_PCF_COFFEE_NO_LUC_LOW = 0.14   # max(0, 2.18 - 2.04)
 LIT_PCF_COFFEE_NO_LUC_HIGH = 4.22  # 2.18 + 2.04
 
-# Fraction of the forest-to-crop delta-C that is "avoided" when conversion occurs to
-# a 100%-canopy agroforestry system, rather than to a full-sun
-# monoculture. Illustrative Tier 1 value, conservatively calibrated at the lower end of the
-# 2.5x-5x range reported in the cocoa literature (see SOURCES.md #X).
+# --- Coffee literature band, WITH LUC (verification test only) — Sourced ---
+# Source: Chéron-Bessou et al. (2024), "Unravelling life cycle impacts of
+# coffee: Why do results differ so much among studies?", Sustainable
+# Production and Consumption 47, 251-266 — the ground-truth coffee review
+# supplied alongside this tool. Table 2, cradle-to-primary-processing-gate,
+# adjusted GWP range "with LUC": 1.63-10.52 kg CO2e/kg green coffee beans.
+# See SOURCES.md #11.
+LIT_PCF_COFFEE_LUC_LOW = 1.63
+LIT_PCF_COFFEE_LUC_HIGH = 10.52
+
+# Fraction of the forest-to-crop delta-C that is "avoided" when conversion occurs
+# directly to a 100%-canopy agroforestry system, rather than to a full-sun
+# monoculture. ILLUSTRATIVE - unverified: this tool's own modelling choice, not
+# a value taken from a specific study. The "lower end of a 2.5x-5x range" framing
+# in earlier notes was an informal recollection, not a pinned citation — treat
+# 0.30 as a placeholder pending a real Tier 2 factor. See SOURCES.md #16.
 # To be refined if a Tier 2 factor specific to cocoa/coffee becomes available.
-LUC_RETENTION_FRACTION_AGROFORESTRY = 0.30
+LUC_RETENTION_FRACTION_AGROFORESTRY = 0.30  # ILLUSTRATIVE - unverified
 
 # ---------------------------------------------------------------------------
 # 12. Drying — post-harvest, IN farm-gate boundary — SOURCES.md item #12
@@ -191,8 +205,8 @@ DRYING_EF_MECHANICAL_COCOA = 0.616
 # milling/... chain) just as coffee is roasted before grinding. It is kept
 # OUT of the main PCF calculation (main.py: run_scenario()) by default, and
 # is only computed as a separate, clearly-labelled extension
-# (main.py: run_roasting_extension) when a scenario opts in via
-# `roast_level != "none"`, because:
+# (main.py: roasting_co2e_addon(), applied via _apply_roasting()) when a
+# scenario opts in via `roast_level != "none"`, because:
 #   (a) it changes the functional unit (green/dry beans -> roasted beans)
 #       via a mass-loss factor that differs sharply between the two crops;
 #   (b) published roasting emission factors vary by ~100-300x across studies

@@ -4,14 +4,14 @@ scenarios_truck.py (fertiliser/yield/LUC/shade unchanged), but with
 transport_mode="truck" (distance 1000km, matching the cocoa truck convention) and
 roast_level="dark" to demonstrate the merged roasting extension
 (SOURCES.md #13). NOT imported by default in main.py's CROP_SCENARIOS — wired
-in separately via ROASTED_DEMO_SCENARIOS / run_roasted_demo(), writing to its
+in separately via ROASTED_SCENARIOS / run_roasted(), writing to its
 own data/output/coffee/roasted_demo/ subfolder so it never mixes with the
 unroasted charts (which would otherwise silently combine two different
 functional units — green vs. roasted beans — in the same stacked bar).
 
 Scenario names are suffixed " — dark roast" to avoid colliding with the plain
 (unroasted) scenarios' (name, transport_mode) keys in any chart/CSV that
-groups results by that ptruck.
+groups results by that pair.
 """
 from src.config import Scenario
 

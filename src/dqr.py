@@ -18,9 +18,10 @@ Each is rated Poor / Fair / Good / Very Good.
 
 2026-09-24 update: added Drying (SOURCES.md #12) and Roasting (SOURCES.md #13)
 categories. Roasting is rated even though it is an OPTIONAL, out-of-boundary
-extension (main.py: run_roasting_extension) — it is only ever computed for
-scenarios that opt in via roast_level != "none", but when it IS computed its
-data quality still needs to be visible to the user.
+extension (main.py: roasting_co2e_addon(), applied via _apply_roasting()) —
+it is only ever computed for scenarios that opt in via roast_level != "none",
+but when it IS computed its data quality still needs to be visible to the
+user.
 """
 
 RATING_ORDER = ["Poor", "Fair", "Good", "Very Good"]
@@ -48,7 +49,7 @@ DQR_RATINGS = {
             "IPCC default covering direct + both indirect pathways."
         ),
     },
-    "Land-use change (Becker et al. 2024 + PAS2050/SBTi FLAG amortisation)": {
+    "Land-use change, cocoa (Becker et al. 2024 + PAS2050/SBTi FLAG amortisation)": {
         "dimensions": {
             "Technological representativeness": "Fair",
             "Geographical representativeness": "Very Good",
@@ -61,6 +62,42 @@ DQR_RATINGS = {
             "aboveground-biomass only (excludes belowground biomass and soil "
             "organic carbon) and drawn from an arXiv preprint of unconfirmed "
             "peer-review status."
+        ),
+    },
+    "Land-use change, coffee (Peruvian Amazon secondary-forest study, SOURCES.md #11)": {
+        "dimensions": {
+            "Technological representativeness": "Fair",
+            "Geographical representativeness": "Fair",
+            "Temporal representativeness": "Good",
+            "Completeness": "Fair",
+            "Reliability of source": "Good",
+        },
+        "note": (
+            "Peer-reviewed (PMC-indexed), but the baseline is SECONDARY forest, "
+            "not primary/intact forest, and aboveground-biomass only. The "
+            "resulting delta-C (101.1 t C/ha) is ~4-5x the cocoa figure mainly "
+            "because reference forest carbon stocks vary hugely by region "
+            "between the two source studies — not evidence that coffee LUC is "
+            "intrinsically worse than cocoa LUC. Combined with a low-yield, "
+            "high-canopy scenario this can push a scenario's PCF above even the "
+            "sourced coffee with-LUC literature ceiling (SOURCES.md #11/#17) — "
+            "a known, documented model behaviour, not a silent error."
+        ),
+    },
+    "LUC retention discount for agroforestry conversion (SOURCES.md #16)": {
+        "dimensions": {
+            "Technological representativeness": "Poor",
+            "Geographical representativeness": "Poor",
+            "Temporal representativeness": "Fair",
+            "Completeness": "Poor",
+            "Reliability of source": "Poor",
+        },
+        "note": (
+            "ILLUSTRATIVE - unverified: LUC_RETENTION_FRACTION_AGROFORESTRY "
+            "(0.30) is this tool's own modelling assumption, not drawn from a "
+            "specific study, despite affecting every LUC=True scenario with "
+            "canopy_cover_pct > 0. Flagged here specifically so it is not "
+            "mistaken for a Sourced value."
         ),
     },
     "Transport (UK DESNZ Conversion Factors 2024)": {
@@ -120,7 +157,7 @@ DQR_RATINGS = {
             "unverified proxy — flagged as the weakest input in the model."
         ),
     },
-        "Roasting, merged into headline PCF when opted-in (SOURCES.md #13)": {
+    "Roasting, merged into headline PCF when opted-in (SOURCES.md #13)": {
         "dimensions": {
             "Technological representativeness": "Poor",
             "Geographical representativeness": "Poor",

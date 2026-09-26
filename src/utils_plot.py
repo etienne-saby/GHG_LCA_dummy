@@ -40,6 +40,9 @@ force inclusion regardless of how the legend was attached.
 
 import os
 
+import matplotlib
+matplotlib.use("Agg")
+
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
 
@@ -120,8 +123,8 @@ def _stack_bar(ax, x, r, width, show_pct=True, min_pct_label=6, pct_fontsize=6.5
     """
     Draw one stacked bar. If show_pct, annotate each segment whose share of
     the bar's total emissions is >= min_pct_label with its percentage, so
-    only the "postes principaux" (main contributors) get a label and small
-    slivers don't clutter the chart.
+    only the main contributors get a label and small slivers don't clutter
+    the chart.
     """
     bottom = 0.0
     total = sum(r[cat] for cat in CATEGORIES)

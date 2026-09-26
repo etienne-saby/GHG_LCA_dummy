@@ -12,10 +12,10 @@ class Scenario:
     crop: str                  # "cocoa" or "coffee" — selects LUC/removal/drying/roasting constants
     product_unit_label: str    # e.g. "dry cocoa beans" / "green coffee beans" — FARM-GATE functional
                                 # unit, used in plot axes. NOTE: if roast_level != "none", the roasting
-                                # EXTENSION (main.py: run_roasting_extension) reports a SEPARATE
-                                # roasted-product PCF under its own label (factors.ROASTED_LABEL) — it
-                                # never overwrites this field, since the two units are not directly
-                                # comparable (see SOURCES.md #13).
+                                # EXTENSION (main.py: roasting_co2e_addon() / _apply_roasting()) reports
+                                # a SEPARATE roasted-product PCF under its own label
+                                # (factors.ROASTED_LABEL) — it never overwrites this field, since the
+                                # two units are not directly comparable (see SOURCES.md #13).
     area_ha: float                          # ILLUSTRATIVE - demo farm profile
     yield_kg_per_ha_yr: float               # ILLUSTRATIVE - demo farm profile
     synthetic_n_kg_per_ha_yr: float         # ILLUSTRATIVE - demo farm profile
@@ -35,11 +35,11 @@ class Scenario:
 
     roast_level: str = "none"
     # "none" (default) / "light" / "medium" / "dark". OPTIONAL,
-    # OUT-OF-FARM-BOUNDARY extension (main.py: run_roasting_extension) —
-    # applies to BOTH crops, since cocoa is roasted downstream just like
-    # coffee (see SOURCES.md #13). "none" behaves exactly like the old
-    # `roasting_included=False`; any other value both enables the extension
-    # AND sets its intensity, so a separate boolean flag is redundant and
-    # has been removed. Default keeps all 8 existing scenario files
-    # unchanged/valid — nothing computes a roasted PCF unless a scenario
-    # explicitly opts in.
+    # OUT-OF-FARM-BOUNDARY extension (main.py: roasting_co2e_addon(), applied
+    # via _apply_roasting()) — applies to BOTH crops, since cocoa is roasted
+    # downstream just like coffee (see SOURCES.md #13). "none" behaves
+    # exactly like the old `roasting_included=False`; any other value both
+    # enables the extension AND sets its intensity, so a separate boolean
+    # flag is redundant and has been removed. Default keeps all 8 existing
+    # scenario files unchanged/valid — nothing computes a roasted PCF unless
+    # a scenario explicitly opts in.

@@ -1,5 +1,5 @@
 """
-scenarios/cocoa/scenarios_air.py — Cocoa farm profiles, air transport.
+scenarios/cocoa/scenarios_sea.py — Cocoa farm profiles, sea transport.
 
 Illustrative-but-plausible farm profiles (not a specific real farm); emission/
 removal FACTORS applied to them are sourced (factors.py/SOURCES.md). Farm size
@@ -10,7 +10,7 @@ comparison isolates fertiliser/LUC/shade effects, not transport.
 """
 from src.config import Scenario
 
-SCENARIOS_AIR = [
+SCENARIOS_SEA = [
     Scenario(
         name="A. Conventional baseline",
         description="No agroforestry, moderate synthetic fertiliser, no recent LUC.",
@@ -18,7 +18,7 @@ SCENARIOS_AIR = [
         area_ha=3.0, yield_kg_per_ha_yr=400,
         synthetic_n_kg_per_ha_yr=60, organic_n_kg_per_ha_yr=0,
         land_use_change=False, canopy_cover_pct=0,
-        transport_distance_km=1000, transport_mode="air",
+        transport_distance_km=6000, transport_mode="sea",
     ),
     Scenario(
         name="B. + Agroforestry",
@@ -27,7 +27,7 @@ SCENARIOS_AIR = [
         area_ha=3.0, yield_kg_per_ha_yr=400,
         synthetic_n_kg_per_ha_yr=60, organic_n_kg_per_ha_yr=0,
         land_use_change=False, canopy_cover_pct=40,
-        transport_distance_km=1000, transport_mode="air",
+        transport_distance_km=6000, transport_mode="sea",
     ),
     Scenario(
         name="C. Recent conversion, high input",
@@ -36,7 +36,7 @@ SCENARIOS_AIR = [
         area_ha=3.0, yield_kg_per_ha_yr=500,
         synthetic_n_kg_per_ha_yr=120, organic_n_kg_per_ha_yr=0,
         land_use_change=True, canopy_cover_pct=0,
-        transport_distance_km=1000, transport_mode="air",
+        transport_distance_km=6000, transport_mode="sea",
     ),
     Scenario(
         name="D. Certified / improved practice",
@@ -45,7 +45,7 @@ SCENARIOS_AIR = [
         area_ha=3.0, yield_kg_per_ha_yr=350,
         synthetic_n_kg_per_ha_yr=20, organic_n_kg_per_ha_yr=40,
         land_use_change=False, canopy_cover_pct=40,
-        transport_distance_km=1000, transport_mode="air",
+        transport_distance_km=6000, transport_mode="sea",
     ),
     Scenario(
         name="E. Agroforestry, organic in forest",
@@ -54,7 +54,7 @@ SCENARIOS_AIR = [
         area_ha=3.0, yield_kg_per_ha_yr=300,
         synthetic_n_kg_per_ha_yr=0, organic_n_kg_per_ha_yr=80,
         land_use_change=True, canopy_cover_pct=50,
-        transport_distance_km=1000, transport_mode="air",
+        transport_distance_km=6000, transport_mode="sea",
     ),
     Scenario(
         name="F. Agroforestry, organic, no recent LUC",
@@ -63,6 +63,6 @@ SCENARIOS_AIR = [
         area_ha=3.0, yield_kg_per_ha_yr=300,
         synthetic_n_kg_per_ha_yr=0, organic_n_kg_per_ha_yr=80,
         land_use_change=False, canopy_cover_pct=50,
-        transport_distance_km=1000, transport_mode="air",
+        transport_distance_km=6000, transport_mode="sea",
     ),
 ]

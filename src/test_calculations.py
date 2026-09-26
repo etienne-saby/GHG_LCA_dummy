@@ -5,12 +5,19 @@ plausible" is not evidence — these are the actual checks, and main.py reports
 their real pass/fail output, not a description of what they're supposed to do.
 
 2026-09-24 update: roasting is now MERGED into run_scenario()'s headline PCF
-(main.py: _apply_roasting). Because scenarios/config.py currently defaults
-roast_level="dark", EVERY imported scenario is roasted by default — so the
-order-of-magnitude literature checks below deliberately use
-`farm_gate_pcf_kg_co2e_per_kg` (pre-roasting, green/dry bean basis), NOT
-`pcf_kg_co2e_per_kg`, since the literature bands (SOURCES.md #9/#9b) were
-never validated against a roasted-basis PCF (see SOURCES.md #13).
+(main.py: _apply_roasting) whenever a scenario's roast_level != "none". The
+order-of-magnitude checks below import the plain (unroasted) truck scenario
+files, where `Scenario.roast_level` defaults to "none" (src/config.py), so
+`pcf_kg_co2e_per_kg` and `farm_gate_pcf_kg_co2e_per_kg` are identical for
+every scenario tested here in practice. The checks still deliberately read
+`farm_gate_pcf_kg_co2e_per_kg` rather than `pcf_kg_co2e_per_kg`, since the
+literature bands (SOURCES.md #9/#9b/#11c) are sourced on an unroasted
+green/dry-bean basis and this keeps the check correct even if a roasted
+scenario set is ever substituted in.
+
+2026-09-26 audit: this file's order-of-magnitude check previously covered
+cocoa only. `CoffeeOrderOfMagnitudeCheck` was added below to close that gap
+— see SOURCES.md #17 for the rationale behind its wider with-LUC margin.
 """
 
 import unittest
@@ -25,7 +32,14 @@ from main import (
     run_scenario,
     roasting_co2e_addon,
 )
-from data.scenarios.cocoa.scenarios_truck import SCENARIOS_TRUCK as SCENARIOS
+from data.scenarios.cocoa.scenarios_truck import SCENARIOS_TRUCK as COCOA_SCENARIOS
+from data.scenarios.coffee.scenarios_truck import SCENARIOS_TRUCK as COFFEE_SCENARIOS
+
+# Kept as an alias so the existing hand-computed / zero-input / monotonicity
+# checks below (which predate the cocoa+coffee split and only ever need "a
+# representative scenario list", not crop-specific values) don't need to
+# change: they use SCENARIOS[0] etc. purely as a generic cocoa fixture.
+SCENARIOS = COCOA_SCENARIOS
 
 
 class ZeroInputSanityChecks(unittest.TestCase):
@@ -142,22 +156,22 @@ class UnitConversionChecks(unittest.TestCase):
             )
 
 
-class OrderOfMagnitudeCheck(unittest.TestCase):
+class CocoaOrderOfMagnitudeCheck(unittest.TestCase):
     """
     Checked against SOURCES.md #9/#9b (peer-reviewed cacao meta-analysis;
     Becker et al. 2024 Ghana/Côte d'Ivoire figures) — flag loudly, don't just
     trust the output, if a scenario's PCF lands outside a defensible range.
 
     IMPORTANT: these bands are sourced on an UNROASTED (green/dry bean)
-    basis. Since scenarios currently default to roast_level="dark", these
-    tests deliberately check `farm_gate_pcf_kg_co2e_per_kg` (pre-roasting),
-    NOT the headline `pcf_kg_co2e_per_kg` — comparing a roasted-basis PCF
-    against an unroasted literature band would be an invalid, misleading
-    check (see SOURCES.md #13).
+    basis. These tests deliberately check `farm_gate_pcf_kg_co2e_per_kg`
+    (pre-roasting), NOT the headline `pcf_kg_co2e_per_kg` — comparing a
+    roasted-basis PCF against an unroasted literature band would be an
+    invalid, misleading check (see SOURCES.md #13). In practice the two are
+    equal here since these scenarios' roast_level defaults to "none".
     """
 
     def test_no_luc_scenarios_within_literature_decile_range(self):
-        for s in SCENARIOS:
+        for s in COCOA_SCENARIOS:
             if s.land_use_change:
                 continue
             result = run_scenario(s)
@@ -174,7 +188,7 @@ class OrderOfMagnitudeCheck(unittest.TestCase):
             )
 
     def test_luc_scenario_shows_order_of_magnitude_jump(self):
-        luc_scenarios = [s for s in SCENARIOS if s.land_use_change]
+        luc_scenarios = [s for s in COCOA_SCENARIOS if s.land_use_change]
         self.assertTrue(luc_scenarios, "No LUC scenario found to test")
         for s in luc_scenarios:
             result = run_scenario(s)
@@ -188,6 +202,62 @@ class OrderOfMagnitudeCheck(unittest.TestCase):
                 pcf, f.LIT_PCF_CIV_LUC * 2,
                 f"{s.name}: LUC scenario farm-gate PCF {pcf:.2f} implausibly far above "
                 f"even the Côte d'Ivoire with-LUC benchmark",
+            )
+
+
+class CoffeeOrderOfMagnitudeCheck(unittest.TestCase):
+    """
+    Coffee counterpart to CocoaOrderOfMagnitudeCheck, added 2026-09-26 to
+    close a coverage gap: this tool previously had no automated check of
+    coffee's calculated PCFs against literature at all (SOURCES.md #17).
+
+    Checked against SOURCES.md #11c: Cornelius et al. 2025 (no-LUC,
+    median +/- IQR) and Chéron-Bessou et al. 2024 Table 2 (with-LUC range,
+    the ground-truth coffee review supplied with this tool).
+
+    The with-LUC ceiling uses a wide (x3) margin, not the raw 10.52 figure —
+    see SOURCES.md #17 for why: Scenario E is a known, deliberately extreme
+    combination (large, differently-sourced coffee LUC delta-C + an
+    unsourced/illustrative canopy retention discount + this crop's
+    lowest-yield scenario) that legitimately lands above the raw literature
+    range. The margin is still tight enough to catch a genuine gross error
+    (e.g. a 10x unit-conversion mistake).
+    """
+
+    def test_no_luc_scenarios_within_literature_range(self):
+        for s in COFFEE_SCENARIOS:
+            if s.land_use_change:
+                continue
+            result = run_scenario(s)
+            pcf = result["farm_gate_pcf_kg_co2e_per_kg"]
+            self.assertGreaterEqual(
+                pcf, f.LIT_PCF_COFFEE_NO_LUC_LOW,
+                f"{s.name}: farm-gate PCF {pcf:.2f} below literature floor "
+                f"({f.LIT_PCF_COFFEE_NO_LUC_LOW})",
+            )
+            self.assertLessEqual(
+                pcf, f.LIT_PCF_COFFEE_NO_LUC_HIGH,
+                f"{s.name}: farm-gate PCF {pcf:.2f} above literature ceiling "
+                f"({f.LIT_PCF_COFFEE_NO_LUC_HIGH})",
+            )
+
+    def test_luc_scenario_shows_order_of_magnitude_jump(self):
+        luc_scenarios = [s for s in COFFEE_SCENARIOS if s.land_use_change]
+        self.assertTrue(luc_scenarios, "No LUC scenario found to test")
+        for s in luc_scenarios:
+            result = run_scenario(s)
+            pcf = result["farm_gate_pcf_kg_co2e_per_kg"]
+            self.assertGreater(
+                pcf, f.LIT_PCF_COFFEE_NO_LUC_HIGH,
+                f"{s.name}: LUC scenario farm-gate PCF {pcf:.2f} did not exceed the "
+                f"no-LUC literature ceiling — LUC penalty looks too small",
+            )
+            self.assertLess(
+                pcf, f.LIT_PCF_COFFEE_LUC_HIGH * 3,
+                f"{s.name}: LUC scenario farm-gate PCF {pcf:.2f} implausibly far above "
+                f"even a x3 margin on the sourced coffee with-LUC ceiling "
+                f"({f.LIT_PCF_COFFEE_LUC_HIGH}) — see SOURCES.md #17 before assuming "
+                f"this is 'just' the known Scenario E outlier",
             )
 
 

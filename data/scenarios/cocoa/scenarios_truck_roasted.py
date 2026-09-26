@@ -1,13 +1,16 @@
 """
 scenarios/cocoa/scenarios_truck_roasted.py — Same six cocoa farm profiles as
 scenarios_truck.py, truck transport, but with roast_level="dark" to demonstrate
-the merged roasting extension (SOURCES.md #13). NOT imported by default in
-main.py's CROP_SCENARIOS — add it explicitly (e.g. as a third list in
-CROP_SCENARIOS["cocoa"]) if you want it included in the standard run.
+the merged roasting extension (SOURCES.md #13). NOT imported into main.py's
+CROP_SCENARIOS — wired in separately via ROASTED_SCENARIOS / run_roasted(),
+writing to its own data/output/cocoa/roasted_demo/ subfolder so it never
+mixes with the unroasted charts (which would otherwise silently combine two
+different functional units — dry beans vs. roasted beans — in the same
+stacked bar).
 
 Scenario names are suffixed " — dark roast" to avoid colliding with the
 plain (unroasted) truck scenarios' (name, transport_mode) keys in charts/CSVs
-that group results by that ptruck.
+that group results by that pair.
 """
 from src.config import Scenario
 

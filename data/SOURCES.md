@@ -1,64 +1,68 @@
-# SOURCES.md — Cocoa Carbon Footprint Prototype
+# SOURCES.md — Cocoa & Coffee Carbon Footprint Prototype
 
-Status: CONFIRMED by user 2026-09-23. All items sourced; implementation in progress.
-
-Confidence tiers: **Sourced** (traceable to a named tier-1/2 source in the hierarchy) /
+Confidence tiers:
+**Sourced** (traceable to a named tier-1/2 source in the hierarchy) /
 **Estimated** (derived from sourced data with an explicit assumption) /
 **Illustrative** (no defensible source found — flagged `# ILLUSTRATIVE - unverified` in code).
 
 ---
 
-## 1. Direct N2O emissions from N inputs (fertiliser)
+## PART I — Cross-crop soil N2O methodology (identical for cocoa and coffee)
 
+### 1. Direct N2O emissions from N inputs (fertiliser) -- **Sourced**
+
+**Source:** IPCC 2019 Refinement to the 2006 IPCC Guidelines, Vol. 4, Ch. 11, Table 11.1
+("Default emission factors to estimate direct N2O emissions from managed soils").
+https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf
+
+**Choice:** the cocoa/coffee belt (Côte d'Ivoire, Ghana, most smallholder origins for both
+crops) is IPCC "tropical wet" climate (annual precipitation > 1000 mm), so the wet-climate
+disaggregated factors are used rather than the aggregated global default (0.010) — the more
+geographically representative Tier 1 option, and still an official IPCC default.
+
+**Value:**
 | Parameter | Value | Unit |
 |---|---|---|
 | EF1, synthetic N, wet climate | 0.016 (range 0.013–0.019) | kg N2O–N / kg N applied |
 | EF1, organic N / other inputs, wet climate | 0.006 (range 0.001–0.011) | kg N2O–N / kg N applied |
 | N2O–N → N2O conversion | × 44/28 | — |
 
-**Source:** IPCC 2019 Refinement to the 2006 IPCC Guidelines, Vol. 4, Ch. 11, Table 11.1
-("Default emission factors to estimate direct N2O emissions from managed soils").
-https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf
+### 2. Indirect N2O — volatilisation pathway (NH3/NOx → redeposition) -- **Sourced**
 
-**Choice:** cocoa belt (Côte d'Ivoire, Ghana, and most smallholder origins) is IPCC "tropical
-wet" climate (annual precipitation > 1000 mm), so the wet-climate disaggregated factors are used
-rather than the aggregated global default (0.010) — this is the more geographically
-representative Tier 1 option and still an official IPCC default, not a custom figure.
+**Source:** same IPCC 2019 Refinement, Table 11.3.
 
-**Tier: Sourced.**
-
-## 2. Indirect N2O — volatilisation pathway (NH3/NOx → redeposition)
-
+**Value:**
 | Parameter | Value | Unit |
 |---|---|---|
 | FracGASF, synthetic fertiliser (aggregate) | 0.11 (urea-specific: 0.15) | kg N volatilised / kg N applied |
 | FracGASM, organic N / manure | 0.21 | kg N volatilised / kg N applied |
 | EF4, wet climate | 0.014 | kg N2O–N / kg N volatilised |
 
+### 3. Indirect N2O — leaching/runoff pathway -- **Sourced**
+
 **Source:** same IPCC 2019 Refinement, Table 11.3.
-**Tier: Sourced.**
 
-## 3. Indirect N2O — leaching/runoff pathway
-
+**Value:**
 | Parameter | Value | Unit |
 |---|---|---|
 | FracLEACH-(H), wet climate | 0.24 | kg N leached / kg N applied |
 | EF5 | 0.011 | kg N2O–N / kg N leached |
 
-**Source:** same IPCC 2019 Refinement, Table 11.3.
-**Tier: Sourced.**
+### 4. GWP100 for N2O -- **Sourced**
 
-## 4. GWP100 for N2O
-
-**Value:** 273 (100-year GWP, no climate–carbon feedbacks)
 **Source:** IPCC AR6 WG1, Table 7.SM.7.
-**Tier: Sourced.**
+**Value:** 273 (100-year GWP, no climate–carbon feedbacks)
 
-## 5. Land-use-change (LUC) amortisation — mechanism
+---
+
+## PART II — Land-use change: mechanism (shared) + cocoa magnitude
+
+### 5. Land-use-change (LUC) amortisation — mechanism -- **Sourced**
 
 **Method:** total carbon-stock loss from conversion (ΔC, t C/ha) is amortised in equal shares
 over 20 years: `annual LUC emission = ΔC × 44/12 × 1/20` (t CO2/ha/yr), added only for plots
-converted from forest within the amortisation window.
+converted from forest within the amortisation window. Crop-specific ΔC magnitudes are in
+#6 (cocoa) and #11a (coffee); the mechanism itself is identical for both crops.
 
 **Sources:**
 - PAS 2050:2011 (BSI), §land-use-change methodology — establishes the 20-year amortisation
@@ -70,66 +74,81 @@ converted from forest within the amortisation window.
   flag triggers the LUC term at all.
   https://sciencebasedtargets.org/blog/why-no-deforestation-must-be-a-priority-sbtis-flag-guidance-unpacked
 
-**Tier: Sourced** (mechanism/formula/window). The magnitude input (ΔC) is item #6 below.
+### 6. Land-use-change — carbon stock loss magnitude (ΔC), cocoa -- **Sourced**
 
-## 6. Land-use-change — carbon stock loss magnitude (ΔC) — RESOLVED
+**Source:** Blaser-Hart, W.J., Hart, S.P. et al., "The unrealized potential of agroforestry
+for an emissions-intensive agricultural commodity," *Nature Sustainability* (2025),
+https://doi.org/10.1038/s41893-025-01608-7 — field/satellite-based aboveground carbon
+density estimates specific to **Ghana and Côte d'Ivoire**.
+
+**2026-09-26 correction:** this was previously cited as an unreviewed arXiv preprint
+(arXiv:2410.20882) with "reliability reduced" flagged in the DQR. It has since been confirmed
+published, peer-reviewed, in *Nature Sustainability* — the reliability caveat below no longer
+applies and should be reflected as a DQR upgrade (see `src/dqr.py`, "Reliability of source":
+Fair → Good).
+
+Preferred over a generic IPCC 2006 GL Table 4.7 global default because it is (a) geographically
+exact to the target region, (b) more recent, and (c) directly measured rather than a broad
+ecozone default. **Caveat, still flagged in the DQR:** this is aboveground biomass carbon
+only — it excludes belowground biomass, soil organic carbon and dead wood/litter, all of
+which IPCC's full LUC accounting would include, so it understates total carbon-stock loss.
 
 **Value:** ΔC ≈ 22.9 t C/ha (aboveground biomass only) = 36.6 t C/ha (intact forest) − 13.7 t C/ha
 (average cocoa landscape carbon density).
 
-**Source:** Becker, N. et al., "The unrealized potential of agroforestry for an emissions-intensive
-agricultural commodity" (2024), arXiv:2410.20882 — field/satellite-based aboveground carbon
-density estimates specific to **Ghana and Côte d'Ivoire** (ECOM's core sourcing geography).
-https://arxiv.org/pdf/2410.20882
+---
 
-Preferred over a generic IPCC 2006 GL Table 4.7 global default because it is (a) geographically
-exact to the target region, (b) more recent (2024 vs. 2006/2019), and (c) directly measured
-rather than a broad ecozone default. **Caveat, flagged in the DQR:** this is aboveground biomass
-carbon only — it excludes belowground biomass, soil organic carbon and dead wood/litter, all of
-which IPCC's full LUC accounting would include, so it understates total carbon-stock loss. The
-20-year amortisation mechanism (see #5) is applied to this ΔC.
+## PART III — Transport (crop-agnostic)
 
-**Also note:** this paper is an arXiv preprint; peer-reviewed publication status not confirmed —
-reflected as reduced "Reliability" in the DQR for this factor.
-
-**Tier: Sourced** (with the completeness/reliability caveats above carried into the DQR).
-
-## 7. Transport
-
-| Mode | Value | Unit |
-|---|---|---|
-| Truck (diesel articulated HGV, average laden) | 0.07547 | kg CO2e / tonne-km |
-| Rail freight (diesel + electric mix, average) | 0.02779 | kg CO2e / tonne-km |
+### 7. Transport -- **Sourced**
 
 **Source:** UK Department for Energy Security & Net Zero (DESNZ), "Greenhouse gas reporting:
 conversion factors 2024," published 8 July 2024.
 https://www.gov.uk/government/publications/greenhouse-gas-reporting-conversion-factors-2024
 
-**Tier: Sourced**, but flagged **Geographical representativeness: Poor** in the DQR — this is a
-UK-published generic default, not West-Africa-specific. It is used here because it is a
-transparent, versioned, publicly documented Tier 1 default; a real tool would move to GLEC
-Framework or regional (Côte d'Ivoire/Ghana port/road) data at Tier 2.
-
-## 8. Agroforestry / shade carbon removal credit
-
-| System | Median CO2 removal rate | Interquartile range |
+**Value:**
+| Mode | Value | Unit |
 |---|---|---|
-| Unshaded cocoa | 3,445 kg CO2/ha/yr | ±1,952 |
-| Agroforestry (shaded) cocoa | 10,237 kg CO2/ha/yr | ±4,178 |
+| Truck (diesel articulated HGV, average laden) | 0.07547 | kg CO2e / tonne-km |
+| Rail freight (diesel + electric mix, average) | 0.02779 | kg CO2e / tonne-km |
+| Air (longhaul, international, estimated)      | 0.55    | kg CO2e / tonne-km |
+| Sea (container ship, average estimate)        | 0.016   | kg CO2e / tonne-km |
+
+**Geographical representativeness: Poor.** This is a UK-published generic default, not
+West-Africa/origin-specific. **Reliability: Fair** — sourced via a secondary aggregator naming
+the exact official dataset/category, not independently re-verified against the primary DESNZ
+spreadsheet cell.
+
+---
+
+## PART IV — Cocoa-specific removal credit and literature benchmarks
+
+### 8. Agroforestry / shade carbon removal credit, cocoa -- **Sourced + Estimated**
 
 **Source:** peer-reviewed systematic review, "Carbon footprint of primary production of cacao: a
 meta-analytical review," Environmental Reviews (2024/2025).
 https://cdnsciencepub.com/doi/full/10.1139/er-2024-0146
 
-**Modelling choice (Estimated):** the tool will linearly interpolate between the unshaded rate
+**Modelling choice (Estimated):** the tool linearly interpolates between the unshaded rate
 (0% canopy cover) and the agroforestry rate (treated as ~100% canopy cover) by the user's %
-canopy-cover input. This linear-interpolation step is an explicit simplifying assumption on top
-of a sourced pair of endpoints — flagged as such in the code comment, not presented as itself
-IPCC/peer-reviewed.
+canopy-cover input — an explicit simplifying assumption on top of a sourced pair of endpoints,
+flagged as such in code, not itself IPCC/peer-reviewed.
 
-**Tier: Sourced** (endpoints) **+ Estimated** (interpolation between them).
+**Value:**
+| System | Median CO2 removal rate | Interquartile range |
+|---|---|---|
+| Unshaded cocoa | 3,445 kg CO2/ha/yr | ±1,952 |
+| Agroforestry (shaded) cocoa | 10,237 kg CO2/ha/yr | ±4,178 |
 
-## 9. Order-of-magnitude literature range (for the required verification test)
+**Important nuance (see README.md, "Why agroforestry doesn't reduce the per-kg footprint"):**
+this same review found that while agroforestry's area-based footprint and yields are both
+lower than unshaded systems, the **product-level** footprint did not differ significantly —
+i.e. this removal credit is a real, sourced co-benefit per hectare, but must never be netted
+against the per-kg PCF. The tool enforces this by reporting emissions and removals as two
+permanently separate numbers (`total_emissions_kg_co2e_yr` / `total_removals_kg_co2_yr`), never
+combined into one net figure.
+
+### 9. Order-of-magnitude literature range, cocoa — for the required verification test -- **Sourced**
 
 **Source:** same meta-analytical review as #8.
 - Product carbon footprint, excluding LUC: median 1.55 kg CO2e/kg dry beans; typical range
@@ -137,89 +156,127 @@ IPCC/peer-reviewed.
 - Product carbon footprint, including LUC (deforestation sub-sample, n=6–8 studies): median
   15.55 kg CO2e/kg dry beans (vs. 0.31 kg CO2e/kg dry beans without LUC in that same sub-sample).
 
-**Use:** `test_calculations.py`'s order-of-magnitude check will assert Scenario A/B/D outputs
-fall within roughly the no-LUC range, and Scenario C (LUC penalty) lands in the LUC-inclusive
-range — both cited ranges, not invented thresholds.
+**Use:** `test_calculations.py`'s order-of-magnitude check asserts no-LUC cocoa scenarios fall
+within roughly the no-LUC range, and the LUC scenario lands in the LUC-inclusive range — both
+cited ranges, not invented thresholds.
 
-**Tier: Sourced.**
+### 9b. Geographically-specific cross-check, cocoa — Ghana / Côte d'Ivoire -- **Sourced**
 
-## 9b. Geographically-specific cross-check — Ghana / Côte d'Ivoire
-
-**Source:** same Becker et al. (2024) arXiv:2410.20882, citing Quantis/World Food LCA Database
+**Source:** same Blaser-Hart et al. (2025) paper as #6, citing Quantis/World Food LCA Database
 estimates:
 - Ghana: 2 kg CO2e/kg cocoa (excl. LUC) → 4 kg CO2e/kg cocoa (incl. LUC)
 - Côte d'Ivoire: 2 kg CO2e/kg cocoa (excl. LUC) → 30 kg CO2e/kg cocoa (incl. LUC)
 
 **Use:** a second, more geographically relevant anchor for the Scenario C order-of-magnitude
-test alongside the global meta-analysis figures in #9. Notably the no-LUC figure (2 kg CO2e/kg)
-is consistent across both countries and close to our Scenario A/D outputs, while the with-LUC
-figure varies enormously by country (4 vs. 30) — reflecting how much deforestation risk differs
-by origin, which is itself a useful talking point for the interview.
-
-**Tier: Sourced.**
-
-## 10. Agroforestry — product-level nuance (for README, not a calculation input)
-
-**Finding:** the same meta-analytical review (#8/#9) found that while agroforestry's *area-based*
-carbon footprint (ACF) and yields are both significantly lower than unshaded systems, the
-*product-level* carbon footprint (PCF, per kg) of agroforestry systems did **not** differ
-significantly from unshaded systems — the yield penalty partly offsets the emissions-per-hectare
-gain. Documented in README so Scenario B's product-level result isn't a surprise: this prototype
-deliberately holds yield constant between Scenarios A and B to isolate the removal-credit
-mechanism, which is a stronger/cleaner version of the same real-world pattern, not a contradiction
-of it. **Tier: Sourced** (finding); the modelling choice to hold yield constant is a documented
-simplification, not itself sourced.
+test alongside the global meta-analysis figures in #9. The no-LUC figure (2 kg CO2e/kg) is
+consistent across both countries and close to Scenario A/D outputs, while the with-LUC figure
+varies enormously by country (4 vs. 30) — reflecting how much deforestation risk differs by
+origin.
 
 ---
 
-## Data Quality Rating (DQR) — dimensions to score per category
+## PART V — Coffee-specific factors
 
-Per the skill's rubric, each input category (fertiliser N2O, LUC, transport, agroforestry credit)
-will get a rating on: Technological representativeness / Geographical representativeness /
-Temporal representativeness / Completeness / Reliability of source — not a single combined score.
-Flagged in advance:
-- Transport: Geographical representativeness = Poor (UK default applied to West Africa); Reliability
-  = Fair — sourced via a secondary aggregator (Climatiq) that names the exact official DESNZ 2024
-  dataset/category, not independently re-verified against the primary spreadsheet cell.
-- LUC ΔC magnitude (#6): Completeness = Fair (aboveground biomass only, excludes belowground/soil
-  carbon); Reliability = Fair (arXiv preprint, peer-review status unconfirmed); Geographical
-  representativeness = Very Good (Ghana/Côte d'Ivoire specific).
-- Everything else above currently rates at least "Fair" on all five dimensions given Tier 1 use.
-- Full per-category, per-dimension ratings are implemented in `dqr.py` and printed in the console
-  output / README, not just summarised here.
+### 11. Coffee-specific land-use-change and agroforestry removal constants
 
-## 12. Drying (post-harvest, IN farm-gate boundary)
+Fertiliser N2O methodology (#1-#3), the LUC amortisation mechanism (#5), and transport EFs (#7)
+are crop-agnostic and reused as-is from the cocoa sections above. This section covers only the
+coffee-specific magnitudes.
 
+#### 11a. Land-use-change ΔC — coffee -- **Sourced**
+
+**Source:** Peruvian Amazon shade-system study, PMC11670197 (PubMed Central).
+https://pmc.ncbi.nlm.nih.gov/articles/PMC11670197/
+
+**Value:** ΔC = 101.1 t C/ha (aboveground biomass only) = 132.2 t C/ha (secondary forest) − 31.1
+t C/ha (unshaded coffee).
+
+**Caveats (Completeness = Fair):**
+- Aboveground biomass only — excludes soil organic carbon, same limitation as the cocoa figure.
+- The baseline is **secondary** forest, not primary/intact forest — more conservative than an
+  Ethiopian corroborating figure of ~98.9 t C/ha vs. undisturbed natural forest, i.e. using
+  primary forest as the baseline would likely give an even larger ΔC.
+- This value is ~4-5x the cocoa ΔC (22.9 t C/ha, item #6). This is mainly because reference
+  forest carbon stocks vary hugely by biome/region between the two source studies, **not**
+  because coffee LUC is intrinsically worse than cocoa LUC — flagged explicitly to avoid a
+  spurious cross-crop comparison being drawn from the model's output.
+
+**Consequence flagged in #17:** combined with a low-yield, high-canopy-cover scenario, this ΔC
+can produce a farm-gate PCF that exceeds even the sourced coffee with-LUC literature ceiling
+(#11c). This is a known, documented model behaviour, not a silent error.
+
+#### 11b. Agroforestry / shade carbon removal credit — coffee -- **Sourced + Estimated**
+
+**Source:** Cornelius et al. 2025, "Carbon footprints and CO2 removal in primary production of
+coffee: a meta-analytical review" (Environmental Reviews) — the coffee-specific companion to the
+cacao meta-analysis used in #8. Median CDR rates. The same review also found that coffee's
+product-level footprint does **not** differ significantly between agroforestry and unshaded
+systems despite ~2.5x higher removals — same "do not net removals against PCF" caveat as #8.
+
+**Modelling choice:** linear interpolation by % canopy cover between these two endpoints, same
+method and caveat as #8 (Estimated, not itself drawn from the review).
+
+**Value:**
+| System | Median CO2 removal rate |
+|---|---|
+| Unshaded coffee | 6,990 kg CO2/ha/yr |
+| Agroforestry (shaded) coffee | 17,676 kg CO2/ha/yr |
+
+#### 11c. Order-of-magnitude literature range, coffee — WITHOUT and WITH LUC -- **Sourced**
+
+**Without LUC (Cornelius et al. 2025):** median 2.18, ± IQR 2.04 kg CO2e/kg green coffee beans
+→ range used in tests/charts: **0.14 – 4.22**. Cornelius et al. 2025 reports median ± IQR, not
+deciles like the cacao paper, so this band is a rougher analogue of #9's decile range — flagged
+as lower precision.
+
+**With LUC (Chéron-Bessou et al. 2024, the ground-truth coffee review supplied with this tool):**
+"Sustainable Production and Consumption" 47, 251-266, Table 2 — cradle-to-primary-processing-gate,
+adjusted GWP range "with LUC": **1.63 – 10.52** kg CO2e/kg green coffee beans.
+https://doi.org/10.1016/j.spc.2024.04.005
+
+**Use:** `CoffeeOrderOfMagnitudeCheck` asserts no-LUC scenarios fall in the 0.14-4.22 band, and
+the LUC scenario clears that ceiling. The with-LUC band's *upper* bound is used only loosely
+(×3 margin) — see #17 for why.
+
+---
+
+## PART VI — Post-harvest processing, shared mechanism, crop-specific values
+
+### 12. Drying (post-harvest, IN farm-gate boundary) -- **Sourced** (coffee) / **Illustrative — unverified** (cocoa proxy)
+
+**Modelling choice:** drying is kept INSIDE the farm-gate boundary because the functional
+units ("dry cocoa beans" / "green coffee beans") are already post-drying — unlike roasting
+(#13), which happens after export.
+
+**Sources:**
+*Coffee* — Honduras biomass-dryer field study comparing three dryer types — rotary (1.017 kg
+CO2e/kg, 12.60 MJ/kg), vertical (0.616 kg CO2e/kg, 7.46 MJ/kg), static (0.33 kg CO2e/kg,
+3.91 MJ/kg). The vertical-dryer value is used as the single Tier 1 "mechanical" default.
+
+*Cocoa* — no cocoa-specific mechanical-drying LCA factor was found. The coffee (Honduras)
+vertical-dryer value is reused as a cross-crop proxy (comparable moisture-removal duty: cocoa
+~60%→7-8%, coffee parchment ~50%→11-12%, both biomass/diesel-fired batch dryers).
+
+**Value:**
 | Method | Value | Unit |
 |---|---|---|
 | Sun/open-air | 0.0 | kg CO2e / kg dried product |
 | Mechanical, coffee | 0.616 | kg CO2e / kg dried parchment coffee |
 | Mechanical, cocoa | 0.616 (proxy) | kg CO2e / kg dried cocoa beans |
 
-**Source (coffee):** Honduras biomass-dryer field study comparing three dryer types —
-rotary (1.017 kg CO2e/kg, 12.60 MJ/kg), vertical (0.616 kg CO2e/kg, 7.46 MJ/kg), static
-(0.33 kg CO2e/kg, 3.91 MJ/kg). The vertical-dryer value is used as the single Tier 1
-"mechanical" default.
+### 13. Roasting — factor sourcing -- **Sourced** (coffee) / **Illustrative — unverified** (cocoa proxy)
 
-**Source (cocoa):** no cocoa-specific mechanical-drying LCA factor was found. The coffee
-(Honduras) vertical-dryer value is reused as a cross-crop proxy (comparable moisture-removal
-duty: cocoa ~60%→7-8%, coffee parchment ~50%→11-12%, both biomass/diesel-fired batch dryers).
+*This section covers only where the roasting EMISSION FACTORS come from. Whether/how roasting
+is merged into a scenario's headline PCF is a separate methodological decision — see #15.*
 
-**Modelling choice:** drying is kept INSIDE the farm-gate boundary because the functional
-units ("dry cocoa beans" / "green coffee beans") are already post-drying — unlike roasting
-(#13), which happens after export.
+**Sources:** batch-roaster energy/cost study (electric roaster, per-batch energy by roast
+degree); efficient gas-fired roaster case study with afterburner heat recovery (~4% share /
+~8 g CO2e/kg green coffee finding); cocoa roasting downstream-processing framing corroborated
+by an industry LCA report (ifeu, Germany) describing roasting as occurring in the consuming
+country, and by a cocoa-processing energy study identifying roasting as one of eight
+quantifiable-but-bundled unit operations in cocoa-to-powder manufacture.
 
-**Tier: Sourced** (coffee) **/ Illustrative — unverified** (cocoa proxy). Flagged
-Reliability: Poor for cocoa in the DQR.
-
-## 13. Roasting (OPTIONAL, OUT-OF-FARM-BOUNDARY extension)
-
-**Scope note:** roasting is downstream of the farm-gate functional unit for BOTH crops —
-cocoa is roasted as part of chocolate manufacture, just as coffee is roasted before grinding.
-It is modelled as a separate, opt-in extension (`Scenario.roast_level`, default `"none"`),
-never mixed into the main farm-gate PCF, because it changes both the system boundary and the
-functional unit (green/dry beans → roasted beans).
-
+**Value:**
 | Roast level | Energy (electric roaster) | Emission factor (0.3 kg CO2e/kWh) |
 |---|---|---|
 | Light | 3.5 kWh/kg green | ~1.05 kg CO2e/kg green (coffee) |
@@ -231,86 +288,96 @@ Cocoa uses a `ROASTING_CROP_MULTIPLIER = 0.5` applied to the same kWh/kg table �
 than coffee; no cocoa-specific roasting-energy study was found).
 
 **Mass loss on roasting:** coffee 15-18% (commonly cited range, midpoint 16% used); cocoa
-~4% (**illustrative, unverified** — no specific published figure found; cocoa roasting is at
-lower temperature and loses much less mass than coffee, essentially residual moisture only).
+~4% (**illustrative, unverified** — no specific published figure found).
 
 **Critical caveat — cross-study uncertainty of ~100-300x:** an alternative published case
 study (efficient gas-fired roaster with afterburner heat recovery) found that roasting
-contributes only ~4% of a coffee product's total cradle-to-grave footprint — equivalent to
-roughly 8 g CO2e/kg green coffee, two to three orders of magnitude below the electric-roaster
-figures above. Both are documented here; the electric-roaster figures are used as the single
-Tier 1 default only because they are the more conservative (higher) estimate.
+contributes only ~4% of a coffee product's total cradle-to-grave footprint — roughly 8 g
+CO2e/kg green coffee, two to three orders of magnitude below the electric-roaster figures
+above. Both are documented here; the electric-roaster figures are used as the single Tier 1
+default only because they are the more conservative (higher) estimate.
 
-**Sources:** batch-roaster energy/cost study (electric roaster, per-batch energy by roast
-degree); efficient gas-fired roaster case study with afterburner heat recovery (~4% share /
-~8 g CO2e/kg green coffee finding); cocoa roasting downstream-processing framing corroborated
-by an industry LCA report (ifeu, Germany) describing "further processing, such as roasting and
-cracking" as occurring in the consuming country, and by a cocoa-processing energy study
-identifying roasting as one of eight quantifiable-but-bundled unit operations in cocoa-to-
-powder manufacture.
+### 15. Roasting — scope decision: merged into headline PCF -- **Methodological choice, not a new factor**
 
-**Tier: Sourced** (coffee kWh/kg table, mass-loss range) **/ Illustrative — unverified**
-(cocoa multiplier, cocoa mass-loss, generic grid EF). Flagged Reliability: Poor across the
-board given the documented ~100-300x cross-study spread.
+**Decision:** roasting is downstream of the farm-gate functional unit for both crops (cocoa is
+roasted as part of chocolate manufacture; coffee is roasted before grinding). `run_scenario()`
+(`src/calculations.py`) computes two figures:
+- `farm_gate_pcf_kg_co2e_per_kg` — **always** pre-roasting (green/dry bean basis), so literature
+  comparisons in #9/#9b/#11c (all reported on this basis) remain valid regardless of
+  `roast_level`.
+- `pcf_kg_co2e_per_kg` — the headline figure. Equal to the farm-gate figure when
+  `roast_level == "none"`; when a scenario opts in, this MERGES the roasting add-on and the
+  functional unit switches to roasted product (`product_unit_label` updates accordingly).
 
-## 14. Known limitations — major LCA posts identified but NOT yet modelled
+**Rationale:** an earlier design kept roasting entirely separate and never produced one final
+combined answer. That was replaced (2026-09-24) because always reporting two same-named "PCF"
+figures without ever giving a single headline number is confusing in a demo setting. Preserving
+`farm_gate_pcf_kg_co2e_per_kg` alongside the merged figure keeps both a clear headline answer
+and a full audit trail back to the unroasted comparison basis.
 
-Flagged here for transparency rather than fabricated with an unsourced factor:
-
-- **On-farm energy / irrigation.** A cocoa value-chain study found irrigation and total
-  energy consumption to be among the most important impact drivers alongside direct field
-  emissions — a distinct post from fertiliser N2O, currently absent from this model.
-- **Non-N agrochemicals (pesticides/fungicides/herbicides).** Manufacture and field-application
-  emissions of crop-protection chemicals appear as hotspots in several cocoa/chocolate LCAs but
-  are not quantified here (only N-fertiliser N2O is modelled).
-- **Fermentation (cocoa-specific postharvest step).** A field study across five Ecuadorian
-  postharvest sites found substantial variability in fermentation devices and duration (jute
-  bags, plastic bags, wooden boxes) — too heterogeneous to derive a single defensible Tier 1
-  emission factor at this time; considered conceptually bundled with drying but not separately
-  quantified.
-- **Cocoa pod-husk waste management.** At least one Colombian study models pod-husk
-  decomposition/composting as its own emissions source; not modelled here.
-- **Packaging and downstream retail/consumption** (both crops): out of the farm-to-first-
-  processing boundary by design, consistent with how roasting is now also treated (#13).
-
-**Tier: N/A (not implemented).** Documented as a roadmap item, not a current model input.
+**Consequence for tests:** `test_calculations.py`'s literature-range checks always assert
+against `farm_gate_pcf_kg_co2e_per_kg`, never against the roasted `pcf_kg_co2e_per_kg`.
 
 ---
 
-## Data Quality Rating (DQR) — dimensions to score per category (updated)
+## PART VII — Illustrative / unverified modelling assumptions
 
-- Drying, cocoa: Reliability = Poor (cross-crop proxy, no cocoa-specific source);
-  Geographical representativeness = Poor (Honduras data applied globally).
-- Drying, coffee: Reliability = Fair (single-country field study); Geographical
-  representativeness = Fair.
-- Roasting (both crops): Reliability = Poor (documented ~100-300x cross-study spread);
-  Completeness = Poor for cocoa specifically (multiplier + mass-loss both unverified);
-  clearly labelled as an optional, out-of-boundary EXTENSION in every chart/CSV, never
-  folded into the headline farm-gate PCF.
+### 16. LUC retention discount for agroforestry conversion (canopy-cover interaction) -- **Illustrative**
 
-  ## 15. Boundary decision update (2026-09-24) — roasting merged into headline PCF
+**Mechanism:** `luc_co2e()` (`src/calculations.py`) reduces the forest→crop ΔC used in the LUC
+amortisation (#5/#6/#11a) by `LUC_RETENTION_FRACTION_AGROFORESTRY × (canopy_cover_pct / 100)`,
+i.e. a conversion straight to a 100%-canopy agroforestry system is modelled as retaining 30%
+more standing woody biomass on-site than a conversion to unshaded monoculture; at 0% canopy
+cover the discount is zero and the calculation reduces to the plain ΔC × 44/12 × 1/20 formula.
 
-Superseding the initial "roasting = separate optional extension" design: roasting is now
-**merged directly into the headline PCF** (`pcf_kg_co2e_per_kg`) whenever a scenario sets
-`roast_level != "none"`. This is a deliberate user choice to see one total-chain number rather
-than two separate figures.
+**Value:** `LUC_RETENTION_FRACTION_AGROFORESTRY = 0.30`.
 
-**Consequence carried through the whole pipeline:** merging roasting changes the functional
-unit from green/dry beans to roasted beans (`product_unit_label` switches automatically via
-`factors.ROASTED_LABEL`). Because the decile/IQR literature bands (#9/#9b) were built on an
-**unroasted** basis, they are:
-- **not** drawn on any chart when the plotted scenarios are roasted (an explicit on-chart
-  caveat replaces the band instead of silently mis-comparing);
-- **not** used by the automated order-of-magnitude test against the headline PCF — the test
-  instead checks the separately-retained `farm_gate_pcf_kg_co2e_per_kg` field, which is always
-  computed pre-roasting regardless of `roast_level`.
+**Tier: Illustrative - unverified.** This is this tool's own modelling assumption, not a value
+taken from a named study. An earlier code comment described it as "conservatively calibrated at
+the lower end of a 2.5x-5x range reported in the cocoa literature" — that framing was an
+informal recollection, not a pinned citation, and has been removed to avoid it reading as
+Sourced. Treat 0.30 as a placeholder: the *direction* of the assumption (agroforestry
+conversion retains more on-site carbon than full-sun conversion) is intuitive and broadly
+consistent with agroforestry LCA literature, but the specific magnitude has not been
+independently verified against a named source.
 
-**Known gap:** no defensible decile/IQR-style literature benchmark was found for a
-roasted-basis cocoa or coffee PCF at this model's system boundary (farm → first processing →
-roasting, excluding packaging/distribution/consumption). A commonly cited German pilot-project
-figure (green coffee PCF ≈ 3.05 kg CO2e/kg, roasting ≈ 6% of that total) exists but covers a
-**different, wider boundary** (production + transport + roasting + grinding + packaging +
-consumption + disposal) and is not a like-for-like check for this tool's roasted-basis PCF —
-flagged as a roadmap item rather than force-fit into the current test.
+**Affected scenarios:** any scenario with both `land_use_change=True` and
+`canopy_cover_pct > 0`. Flagged as its own line so it cannot be mistaken for part of the
+(Sourced) LUC mechanism itself.
 
-**Tier: N/A** (methodological/boundary decision, not a new factor).
+**Improvement:** replace with a Tier 2 factor specific to cocoa/coffee agroforestry conversion
+if one becomes available; until then, treat any scenario's LUC-with-shade result as
+illustrative of the *mechanism*, not a validated magnitude.
+
+---
+
+## PART VIII — Known model behaviours & test-design notes
+
+### 17. Coffee Scenario E: LUC + high canopy cover can exceed the literature with-LUC ceiling
+
+**What happens:** the coffee LUC ΔC (101.1 t C/ha, #11a) is already ~4-5x the cocoa ΔC for
+reasons unrelated to crop-intrinsic impact (#11a). Combine that with the illustrative LUC
+retention discount (#16) at high canopy cover, applied to a low-yield coffee scenario, and the
+resulting farm-gate PCF can land above even the sourced 1.63–10.52 kg CO2e/kg with-LUC range
+(#11c).
+
+**Why this is expected, not a bug:** none of the three inputs driving this (coffee's higher ΔC,
+the illustrative retention discount, a deliberately low-yield scenario) is individually wrong —
+their combination in one stress-test scenario simply pushes past a literature band that was
+never designed to bound every possible combination of inputs.
+
+**Consequence for tests:** `CoffeeOrderOfMagnitudeCheck` in `test_calculations.py` uses a wider
+(×3) margin on the upper bound of #11c's with-LUC range, rather than the raw ceiling, so the
+test still catches a genuine gross error (e.g. a 10x unit-conversion mistake) without failing
+on this known, legitimate outlier.
+
+---
+
+## Data Quality Rating (DQR)
+
+Per-category ratings (five dimensions — Technological/Geographical/Temporal representativeness,
+Completeness, Reliability of source — combined via a "weakest dimension" rule) are maintained
+as **executable code**, not a static table here, to avoid the two ever drifting apart: see
+`src/dqr.py::DQR_RATINGS` and run `python -m src.dqr` (or `python main.py`, which calls it
+automatically) for the current report. The reasoning behind each rating is written directly
+next to the sourcing decision it evaluates, in the relevant section above.
