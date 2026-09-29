@@ -1,0 +1,1 @@
+"""Configuration et données de référence pour random_gen."""

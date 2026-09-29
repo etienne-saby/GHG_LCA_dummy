@@ -4,4 +4,8 @@ venv/
 .env
 .vscode/
 data/output/
-*.pbix
+power_bi_dashboard/
+power_bi_dashboard/*
+*.pbip
+*CLAUDE.md
+*SKILL.md
